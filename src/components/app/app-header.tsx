@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 export type WordCountValue = 10 | 25 | 50;
 export type TimeValue = 15 | 30 | 45 | 60;
@@ -118,12 +119,27 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           >
             <Hash size={16} /> Numbers
           </Button>
+          
+           <Button
+            type="button"
+            variant="ghost"
+            onClick={() => handleModeChange('alphabet')}
+            disabled={isGenerating}
+            className={cn("transition-colors", {
+              "bg-primary text-primary-foreground hover:bg-primary/90": config.mode === 'alphabet',
+              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": config.mode !== 'alphabet',
+            })}
+          >
+            <CaseUpper size={16} /> Alphabet
+          </Button>
         </div>
+        
+        <Separator orientation="vertical" className="h-8 hidden sm:block" />
 
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Tabs
             value={config.mode}
-            onValueChange={(value) => handleModeChange(value as "time" | "words" | "alphabet")}
+            onValueChange={(value) => handleModeChange(value as "time" | "words")}
           >
             <TabsList>
               <TabsTrigger value="time" disabled={isGenerating}>
@@ -131,9 +147,6 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
               </TabsTrigger>
               <TabsTrigger value="words" disabled={isGenerating}>
                 <FileText size={16} className="mr-2" /> Words
-              </TabsTrigger>
-              <TabsTrigger value="alphabet" disabled={isGenerating}>
-                <CaseUpper size={16} className="mr-2" /> Alphabet
               </TabsTrigger>
             </TabsList>
           </Tabs>
