@@ -9,18 +9,23 @@ import { AppHeader, type AppConfig } from "@/components/app/app-header";
 import { TypingTest } from "@/components/app/typing-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Github, Twitter } from "lucide-react";
+import { Focus, Github, Twitter } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [story, setStory] = useState<{ id: string; text: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isTypingTestFocused, setIsTypingTestFocused] = useState(true);
+  const [isTestRunning, setIsTestRunning] = useState(false);
+
   const { toast } = useToast();
 
   const handleGenerate = async (newConfig: AppConfig) => {
     setIsGenerating(true);
     setConfig(newConfig);
     setStory(null); // Clear previous story
+    setIsTestRunning(false);
 
     try {
       const result = await generateStoryAction({
@@ -31,6 +36,7 @@ export default function Home() {
       });
       // Using Date.now() as a simple unique ID to force re-mounting of the TypingTest component
       setStory({ id: `${Date.now()}`, text: result.story });
+      setIsTypingTestFocused(true); // Auto-focus on new story
     } catch (error) {
       console.error("Failed to generate story:", error);
       toast({
@@ -43,8 +49,12 @@ export default function Home() {
     }
   };
 
+  const showOverlay = !isTypingTestFocused && isTestRunning && story;
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8">
+    <div className={cn("flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8", {
+      'blur-sm': showOverlay,
+    })}>
       <div className="w-full max-w-5xl">
         <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
 
@@ -62,6 +72,8 @@ export default function Home() {
                 key={story.id}
                 storyText={story.text}
                 config={config}
+                onFocusChange={setIsTypingTestFocused}
+                onStatusChange={(status) => setIsTestRunning(status === 'running' || status === 'idle')}
               />
             )}
             {!isGenerating && !story && (
@@ -85,6 +97,15 @@ export default function Home() {
           </div>
         </footer>
       </div>
+
+      {showOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
+          <div className="flex flex-col items-center gap-2 text-foreground">
+            <Focus size={32} />
+            <p className="text-lg font-medium">Click here or press any key to continue</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

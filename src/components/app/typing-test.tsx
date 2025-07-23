@@ -14,25 +14,30 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Focus } from "lucide-react";
 
+type TestStatus = "idle" | "running" | "finished";
+
 interface TypingTestProps {
   storyText: string;
   config: AppConfig;
+  onFocusChange: (isFocused: boolean) => void;
+  onStatusChange: (status: TestStatus) => void;
 }
 
-export function TypingTest({ storyText, config }: TypingTestProps) {
-  const [status, setStatus] = useState<"idle" | "running" | "finished">(
-    "idle"
-  );
+export function TypingTest({ storyText, config, onFocusChange, onStatusChange }: TypingTestProps) {
+  const [status, setStatus] = useState<TestStatus>("idle");
   const [input, setInput] = useState("");
   const [charIndex, setCharIndex] = useState(0);
   const [correctCharCount, setCorrectCharCount] = useState(0);
   const [errorCount, setErrorCount] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.mode === 'time' ? config.value : 0);
-  const [isFocused, setIsFocused] = useState(true);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    onStatusChange(status);
+  }, [status, onStatusChange]);
 
   const start = useCallback(() => {
     if (status === "idle") {
@@ -74,7 +79,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     setTimeElapsed(0);
     if(config.mode === 'time') setTimeLeft(config.value);
     if (intervalRef.current) clearInterval(intervalRef.current);
-    setIsFocused(true);
+    onFocusChange(true);
     inputRef.current?.focus();
   };
   
@@ -147,9 +152,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
       </div>
       
       <div
-        className={cn("relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto transition-colors",
-          { 'blur-sm': !isFocused && status !== 'finished' }
-        )}
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto transition-colors"
       >
         <div className="whitespace-pre-wrap">
           {words.map((word, wordIndex) => {
@@ -189,15 +192,6 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
         </div>
       </div>
 
-      {!isFocused && status !== 'finished' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-md">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Focus size={24} />
-            <p>Click here or press any key to focus</p>
-          </div>
-        </div>
-      )}
-
       <input
         ref={inputRef}
         type="text"
@@ -205,8 +199,8 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
         onKeyDown={handleKeyDown}
         value={input}
         onChange={()=>{}}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={() => onFocusChange(true)}
+        onBlur={() => onFocusChange(false)}
         autoFocus
       />
       
