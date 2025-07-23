@@ -5,7 +5,7 @@ import {
   type GenerateTypingStoryInput,
 } from "@/ai/flows/generate-typing-story";
 
-export async function generateStoryAction(input: GenerateTypingStoryInput) {
+export async function generateStoryAction(input: Omit<GenerateTypingStoryInput, 'seed'>) {
   // Add validation or further processing here if needed
   if (
     !input.includeAlphabet &&
@@ -16,5 +16,11 @@ export async function generateStoryAction(input: GenerateTypingStoryInput) {
       return { story: "" };
     }
   }
-  return await generateTypingStory(input);
+
+  const seededInput = {
+    ...input,
+    seed: Math.random().toString(36).substring(7),
+  }
+
+  return await generateTypingStory(seededInput);
 }

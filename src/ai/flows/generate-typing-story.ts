@@ -26,6 +26,9 @@ const GenerateTypingStoryInputSchema = z.object({
   wordCount: z
     .number()
     .describe('The approximate number of words the generated story should contain.'),
+  seed: z
+    .string()
+    .describe('A random seed to ensure story uniqueness.'),
 });
 export type GenerateTypingStoryInput = z.infer<typeof GenerateTypingStoryInputSchema>;
 
@@ -65,6 +68,8 @@ const typingStoryPrompt = ai.definePrompt({
   {{~else}}
   Do not include the full alphabet in the story.
   {{~/if}}
+
+  To ensure variety, use this random seed to make each story unique: {{seed}}
 
   Story:`,
 });
