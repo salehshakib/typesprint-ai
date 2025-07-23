@@ -53,7 +53,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
         setTimeElapsed((prev) => prev + 1);
       }, 1000);
     }
-  }, [status, config.mode]);
+  }, [status, config.mode, config.value]);
 
   useEffect(() => {
     return () => {
@@ -92,34 +92,41 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     if (key === "Backspace") {
       if (charIndex > 0) {
         setCharIndex(charIndex - 1);
+        // Check if the character being removed was incorrect
         if (input[charIndex-1] !== storyText[charIndex-1]) {
-            // This logic could be improved to better track errors on backspace
+           // This logic is complex, as it depends on how we want to track backspace corrections.
+           // A simple approach is to not decrement error count on backspace,
+           // letting accuracy reflect all errors made.
         }
         setInput(input.slice(0, -1));
       }
     } else if (key.length === 1) {
-      if (key === storyText[charIndex]) {
-        setCorrectCharCount(correctCharCount + 1);
-      } else {
-        setErrorCount(errorCount + 1);
+      if (charIndex < storyText.length) {
+        if (key === storyText[charIndex]) {
+          setCorrectCharCount(correctCharCount + 1);
+        } else {
+          setErrorCount(errorCount + 1);
+        }
+        setCharIndex(charIndex + 1);
+        setInput(input + key);
       }
-      setCharIndex(charIndex + 1);
-      setInput(input + key);
     }
   };
 
-  const wordsTyped = input.trim().split(" ").length;
+  const wordsTyped = input.trim().split(" ").filter(Boolean).length;
   const wpm =
     timeElapsed > 0
       ? Math.round((correctCharCount / 5 / timeElapsed) * 60)
       : 0;
   const accuracy =
-    charIndex > 0 ? Math.round((correctCharCount / charIndex) * 100) : 100;
+    charIndex > 0
+      ? Math.round(((charIndex - errorCount) / charIndex) * 100)
+      : 100;
 
   const characters = useMemo(() => {
     return storyText.split("").map((char, index) => {
       let state: "correct" | "incorrect" | "untyped" = "untyped";
-      if (index < charIndex) {
+      if (index < input.length) {
         state = input[index] === char ? "correct" : "incorrect";
       }
       return { char, state, isCurrent: index === charIndex };
@@ -149,7 +156,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
             <span
               key={index}
               className={cn({
-                "text-muted-foreground": state === "untyped",
+                "text-muted-foreground": state === "untyped" && index >= charIndex,
                 "text-foreground": state === "correct",
                 "text-destructive": state === "incorrect",
                 "bg-accent/20": isCurrent,

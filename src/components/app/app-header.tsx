@@ -134,7 +134,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           ) : (
             <RefreshCw className="mr-2 h-5 w-5" />
           )}
-          Go
+          New Story
         </Button>
       </form>
     </header>
