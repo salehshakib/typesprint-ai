@@ -76,8 +76,8 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             onClick={() => setConfig(c => ({...c, includePunctuation: !c.includePunctuation}))}
             disabled={isGenerating}
             className={cn("transition-colors", {
-              'text-white': config.includePunctuation,
-              'text-muted-foreground hover:text-white': !config.includePunctuation
+              "bg-primary text-primary-foreground hover:bg-primary/90": config.includePunctuation,
+              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includePunctuation,
             })}
           >
             <Pilcrow size={16} /> Punctuation
@@ -89,8 +89,8 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             onClick={() => setConfig(c => ({...c, includeNumbers: !c.includeNumbers}))}
             disabled={isGenerating}
             className={cn("transition-colors", {
-              'text-white': config.includeNumbers,
-              'text-muted-foreground hover:text-white': !config.includeNumbers
+              "bg-primary text-primary-foreground hover:bg-primary/90": config.includeNumbers,
+              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeNumbers,
             })}
           >
             <Hash size={16} /> Numbers
