@@ -12,6 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, Loader2 } from "lucide-react";
 
 type TestStatus = "idle" | "running" | "finished";
 
@@ -19,9 +21,11 @@ interface TypingTestProps {
   storyText: string;
   config: AppConfig;
   onStatusChange: (status: TestStatus) => void;
+  onRestart: () => void;
+  isRestarting: boolean;
 }
 
-export function TypingTest({ storyText, config, onStatusChange }: TypingTestProps) {
+export function TypingTest({ storyText, config, onStatusChange, onRestart, isRestarting }: TypingTestProps) {
   const [status, setStatus] = useState<TestStatus>("idle");
   const [input, setInput] = useState("");
   const [charIndex, setCharIndex] = useState(0);
@@ -68,7 +72,11 @@ export function TypingTest({ storyText, config, onStatusChange }: TypingTestProp
     };
   }, []);
 
-  const handleReset = () => {
+  const handleReset = (newStory: boolean = false) => {
+    if (newStory) {
+      onRestart();
+      return;
+    }
     setStatus("idle");
     setInput("");
     setCharIndex(0);
@@ -90,7 +98,7 @@ export function TypingTest({ storyText, config, onStatusChange }: TypingTestProp
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (status === "finished") return;
+    if (status === "finished" || isRestarting) return;
     if (status === 'idle') start();
 
     const key = e.key;
@@ -188,6 +196,18 @@ export function TypingTest({ storyText, config, onStatusChange }: TypingTestProp
           })}
         </div>
       </div>
+      
+      {status === 'running' && (
+        <div className="absolute bottom-0 right-0">
+          <Button variant="ghost" size="icon" onClick={() => handleReset(true)} disabled={isRestarting}>
+             {isRestarting ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+      )}
 
       <input
         ref={inputRef}
@@ -228,9 +248,14 @@ export function TypingTest({ storyText, config, onStatusChange }: TypingTestProp
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleReset} className="w-full">
+            <Button onClick={() => handleReset(true)} className="w-full">
+               {isRestarting ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-5 w-5" />
+              )}
               Play Again
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

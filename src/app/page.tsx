@@ -61,6 +61,12 @@ export default function Home() {
     }
   };
 
+  const handleRestart = async () => {
+    if (config) {
+      await handleGenerate(config);
+    }
+  };
+
   const showOverlay = !isWindowFocused && isTestRunning && story;
 
   return (
@@ -89,6 +95,8 @@ export default function Home() {
                   onStatusChange={(status) =>
                     setIsTestRunning(status === "running" || status === "idle")
                   }
+                  onRestart={handleRestart}
+                  isRestarting={isGenerating}
                 />
               )}
               {!isGenerating && !story && (
