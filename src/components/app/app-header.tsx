@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Keyboard,
   Hash,
@@ -14,6 +11,8 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export interface AppConfig {
   includePunctuation: boolean;
@@ -70,33 +69,32 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
         onSubmit={handleSubmit}
         className="flex w-full flex-col items-center gap-4 rounded-lg border bg-card p-4 sm:flex-row sm:justify-between"
       >
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="punctuation"
-              checked={config.includePunctuation}
-              onCheckedChange={(checked) =>
-                setConfig((c) => ({ ...c, includePunctuation: checked }))
-              }
-              disabled={isGenerating}
-            />
-            <Label htmlFor="punctuation" className="flex items-center gap-1.5">
-              <Pilcrow size={16} /> Punctuation
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="numbers"
-              checked={config.includeNumbers}
-              onCheckedChange={(checked) =>
-                setConfig((c) => ({ ...c, includeNumbers: checked }))
-              }
-              disabled={isGenerating}
-            />
-            <Label htmlFor="numbers" className="flex items-center gap-1.5">
-              <Hash size={16} /> Numbers
-            </Label>
-          </div>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setConfig(c => ({...c, includePunctuation: !c.includePunctuation}))}
+            disabled={isGenerating}
+            className={cn("transition-colors", {
+              'text-white': config.includePunctuation,
+              'text-muted-foreground hover:text-white': !config.includePunctuation
+            })}
+          >
+            <Pilcrow size={16} /> Punctuation
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setConfig(c => ({...c, includeNumbers: !c.includeNumbers}))}
+            disabled={isGenerating}
+            className={cn("transition-colors", {
+              'text-white': config.includeNumbers,
+              'text-muted-foreground hover:text-white': !config.includeNumbers
+            })}
+          >
+            <Hash size={16} /> Numbers
+          </Button>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
