@@ -89,6 +89,19 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           <Button
             type="button"
             variant="ghost"
+            onClick={() => setConfig(c => ({...c, includeAlphabet: !c.includeAlphabet}))}
+            disabled={isGenerating}
+            className={cn("transition-colors", {
+              "bg-primary text-primary-foreground hover:bg-primary/90": config.includeAlphabet,
+              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeAlphabet,
+            })}
+          >
+            <CaseUpper size={16} /> Alphabet
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => setConfig(c => ({...c, includePunctuation: !c.includePunctuation}))}
             disabled={isGenerating}
             className={cn("transition-colors", {
@@ -110,19 +123,6 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             })}
           >
             <Hash size={16} /> Numbers
-          </Button>
-          
-           <Button
-            type="button"
-            variant="ghost"
-            onClick={() => setConfig(c => ({...c, includeAlphabet: !c.includeAlphabet}))}
-            disabled={isGenerating}
-            className={cn("transition-colors", {
-              "bg-primary text-primary-foreground hover:bg-primary/90": config.includeAlphabet,
-              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeAlphabet,
-            })}
-          >
-            <CaseUpper size={16} /> Alphabet
           </Button>
         </div>
         
