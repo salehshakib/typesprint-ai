@@ -76,11 +76,11 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
   };
   
   useEffect(() => {
-      if (status === 'running' && charIndex === storyText.length) {
+      if (status === 'running' && config.mode === 'words' && charIndex === storyText.length) {
           setStatus('finished');
           if (intervalRef.current) clearInterval(intervalRef.current);
       }
-  }, [charIndex, storyText.length, status]);
+  }, [charIndex, storyText.length, status, config.mode]);
 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -143,7 +143,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     <div className="relative" onClick={() => inputRef.current?.focus()}>
       <div className="flex justify-between items-center mb-4 text-lg text-primary">
         {config.mode === 'time' && <div>Time: {timeLeft}s</div>}
-        {(config.mode === 'words' || config.mode === 'alphabet') && <div>Progress: {charIndex} / {storyText.length}</div>}
+        {config.mode === 'words' && <div>Progress: {charIndex} / {storyText.length}</div>}
         <div>WPM: {wpm}</div>
         <div>Acc: {accuracy}%</div>
       </div>

@@ -20,6 +20,9 @@ const GenerateTypingStoryInputSchema = z.object({
   includeNumbers: z
     .boolean()
     .describe('Whether or not to include numbers in the generated story.'),
+  includeAlphabet: z
+    .boolean()
+    .describe('Whether or not to include the alphabet in the generated story.'),
   wordCount: z
     .number()
     .describe('The approximate number of words the generated story should contain.'),
@@ -55,6 +58,12 @@ const typingStoryPrompt = ai.definePrompt({
   Include numbers in the story.
   {{~else}}
   Do not include numbers in the story.
+  {{~/if}}
+
+  {{~#if includeAlphabet}}
+  Include the full alphabet "abcdefghijklmnopqrstuvwxyz" somewhere in the story.
+  {{~else}}
+  Do not include the full alphabet in the story.
   {{~/if}}
 
   Story:`,

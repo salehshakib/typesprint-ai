@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Keyboard,
@@ -22,7 +22,8 @@ export type TimeValue = 15 | 30 | 45 | 60;
 export interface AppConfig {
   includePunctuation: boolean;
   includeNumbers: boolean;
-  mode: "time" | "words" | "alphabet";
+  includeAlphabet: boolean;
+  mode: "time" | "words";
   value: TimeValue | WordCountValue;
 }
 
@@ -47,21 +48,12 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
   const [config, setConfig] = useState<AppConfig>({
     includePunctuation: false,
     includeNumbers: false,
+    includeAlphabet: false,
     mode: "words",
     value: 25,
   });
 
-  useEffect(() => {
-    if (config.mode === "alphabet") {
-      setConfig(c => ({
-        ...c,
-        includePunctuation: false,
-        includeNumbers: false,
-      }));
-    }
-  }, [config.mode]);
-
-  const handleModeChange = (mode: "time" | "words" | "alphabet") => {
+  const handleModeChange = (mode: "time" | "words") => {
     setConfig((prev) => ({
       ...prev,
       mode,
@@ -98,7 +90,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             type="button"
             variant="ghost"
             onClick={() => setConfig(c => ({...c, includePunctuation: !c.includePunctuation}))}
-            disabled={isGenerating || config.mode === 'alphabet'}
+            disabled={isGenerating}
             className={cn("transition-colors", {
               "bg-primary text-primary-foreground hover:bg-primary/90": config.includePunctuation,
               "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includePunctuation,
@@ -111,7 +103,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             type="button"
             variant="ghost"
             onClick={() => setConfig(c => ({...c, includeNumbers: !c.includeNumbers}))}
-            disabled={isGenerating || config.mode === 'alphabet'}
+            disabled={isGenerating}
             className={cn("transition-colors", {
               "bg-primary text-primary-foreground hover:bg-primary/90": config.includeNumbers,
               "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeNumbers,
@@ -123,11 +115,11 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
            <Button
             type="button"
             variant="ghost"
-            onClick={() => handleModeChange('alphabet')}
+            onClick={() => setConfig(c => ({...c, includeAlphabet: !c.includeAlphabet}))}
             disabled={isGenerating}
             className={cn("transition-colors", {
-              "bg-primary text-primary-foreground hover:bg-primary/90": config.mode === 'alphabet',
-              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": config.mode !== 'alphabet',
+              "bg-primary text-primary-foreground hover:bg-primary/90": config.includeAlphabet,
+              "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeAlphabet,
             })}
           >
             <CaseUpper size={16} /> Alphabet
@@ -151,17 +143,15 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             </TabsList>
           </Tabs>
 
-          {config.mode !== 'alphabet' && (
-            <Tabs value={String(config.value)} onValueChange={handleValueChange}>
-              <TabsList>
-                {options.map((option) => (
-                  <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
-                    {option.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          )}
+          <Tabs value={String(config.value)} onValueChange={handleValueChange}>
+            <TabsList>
+              {options.map((option) => (
+                <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
+                  {option.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
         <Button

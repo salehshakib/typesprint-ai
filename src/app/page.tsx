@@ -22,19 +22,11 @@ export default function Home() {
     setConfig(newConfig);
     setStory(null); // Clear previous story
 
-    if (newConfig.mode === "alphabet") {
-      setStory({
-        id: `${Date.now()}`,
-        text: "abcdefghijklmnopqrstuvwxyz",
-      });
-      setIsGenerating(false);
-      return;
-    }
-
     try {
       const result = await generateStoryAction({
         includeNumbers: newConfig.includeNumbers,
         includePunctuation: newConfig.includePunctuation,
+        includeAlphabet: newConfig.includeAlphabet,
         wordCount: Number(newConfig.value),
       });
       // Using Date.now() as a simple unique ID to force re-mounting of the TypingTest component
