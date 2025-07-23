@@ -79,6 +79,7 @@ const generateTypingStoryFlow = ai.defineFlow(
     name: 'generateTypingStoryFlow',
     inputSchema: GenerateTypingStoryInputSchema,
     outputSchema: GenerateTypingStoryOutputSchema,
+    retries: 3,
   },
   async input => {
     const {output} = await typingStoryPrompt(input);
