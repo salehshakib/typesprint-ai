@@ -53,7 +53,7 @@ export default function Home() {
 
   return (
     <div className={cn("flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8", {
-      'blur-sm': showOverlay,
+      'blur-[2px]': showOverlay,
     })}>
       <div className="w-full max-w-5xl">
         <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
