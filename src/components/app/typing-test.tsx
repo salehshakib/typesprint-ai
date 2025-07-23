@@ -12,18 +12,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Focus } from "lucide-react";
 
 type TestStatus = "idle" | "running" | "finished";
 
 interface TypingTestProps {
   storyText: string;
   config: AppConfig;
-  onFocusChange: (isFocused: boolean) => void;
   onStatusChange: (status: TestStatus) => void;
 }
 
-export function TypingTest({ storyText, config, onFocusChange, onStatusChange }: TypingTestProps) {
+export function TypingTest({ storyText, config, onStatusChange }: TypingTestProps) {
   const [status, setStatus] = useState<TestStatus>("idle");
   const [input, setInput] = useState("");
   const [charIndex, setCharIndex] = useState(0);
@@ -79,7 +77,6 @@ export function TypingTest({ storyText, config, onFocusChange, onStatusChange }:
     setTimeElapsed(0);
     if(config.mode === 'time') setTimeLeft(config.value);
     if (intervalRef.current) clearInterval(intervalRef.current);
-    onFocusChange(true);
     inputRef.current?.focus();
   };
   
@@ -199,8 +196,6 @@ export function TypingTest({ storyText, config, onFocusChange, onStatusChange }:
         onKeyDown={handleKeyDown}
         value={input}
         onChange={()=>{}}
-        onFocus={() => onFocusChange(true)}
-        onBlur={() => onFocusChange(false)}
         autoFocus
       />
       

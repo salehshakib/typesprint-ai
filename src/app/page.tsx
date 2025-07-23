@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { GenerateTypingStoryInput } from "@/ai/flows/generate-typing-story";
 import { generateStoryAction } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
@@ -16,10 +16,23 @@ export default function Home() {
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [story, setStory] = useState<{ id: string; text: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isTypingTestFocused, setIsTypingTestFocused] = useState(true);
+  const [isWindowFocused, setIsWindowFocused] = useState(true);
   const [isTestRunning, setIsTestRunning] = useState(false);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => setIsWindowFocused(false);
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("blur", handleBlur);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, []);
 
   const handleGenerate = async (newConfig: AppConfig) => {
     setIsGenerating(true);
@@ -36,7 +49,6 @@ export default function Home() {
       });
       // Using Date.now() as a simple unique ID to force re-mounting of the TypingTest component
       setStory({ id: `${Date.now()}`, text: result.story });
-      setIsTypingTestFocused(true); // Auto-focus on new story
     } catch (error) {
       console.error("Failed to generate story:", error);
       toast({
@@ -49,18 +61,13 @@ export default function Home() {
     }
   };
 
-  const showOverlay = !isTypingTestFocused && isTestRunning && story;
+  const showOverlay = !isWindowFocused && isTestRunning && story;
 
   return (
     <div className="relative min-h-screen overflow-hidden">
        <div className="absolute inset-0 bg-grid-pattern animate-grid-flow -z-10" />
       <div
-        className={cn(
-          "relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all",
-          {
-            "blur-[1px]": showOverlay,
-          }
-        )}
+        className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all"
       >
         <div className="w-full max-w-5xl">
           <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
@@ -79,7 +86,6 @@ export default function Home() {
                   key={story.id}
                   storyText={story.text}
                   config={config}
-                  onFocusChange={setIsTypingTestFocused}
                   onStatusChange={(status) =>
                     setIsTestRunning(status === "running" || status === "idle")
                   }
@@ -119,7 +125,7 @@ export default function Home() {
         </div>
       </div>
       {showOverlay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="flex items-center gap-2 text-foreground">
             <Mouse size={24} />
             <p className="text-lg font-medium">
