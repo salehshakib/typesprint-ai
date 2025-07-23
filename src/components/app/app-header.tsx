@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Keyboard,
@@ -10,6 +10,7 @@ import {
   FileText,
   Loader2,
   RefreshCw,
+  CaseUpper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,7 +21,7 @@ export type TimeValue = 15 | 30 | 45 | 60;
 export interface AppConfig {
   includePunctuation: boolean;
   includeNumbers: boolean;
-  mode: "time" | "words";
+  mode: "time" | "words" | "alphabet";
   value: TimeValue | WordCountValue;
 }
 
@@ -49,7 +50,17 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
     value: 25,
   });
 
-  const handleModeChange = (mode: "time" | "words") => {
+  useEffect(() => {
+    if (config.mode === "alphabet") {
+      setConfig(c => ({
+        ...c,
+        includePunctuation: false,
+        includeNumbers: false,
+      }));
+    }
+  }, [config.mode]);
+
+  const handleModeChange = (mode: "time" | "words" | "alphabet") => {
     setConfig((prev) => ({
       ...prev,
       mode,
@@ -86,7 +97,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             type="button"
             variant="ghost"
             onClick={() => setConfig(c => ({...c, includePunctuation: !c.includePunctuation}))}
-            disabled={isGenerating}
+            disabled={isGenerating || config.mode === 'alphabet'}
             className={cn("transition-colors", {
               "bg-primary text-primary-foreground hover:bg-primary/90": config.includePunctuation,
               "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includePunctuation,
@@ -99,7 +110,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
             type="button"
             variant="ghost"
             onClick={() => setConfig(c => ({...c, includeNumbers: !c.includeNumbers}))}
-            disabled={isGenerating}
+            disabled={isGenerating || config.mode === 'alphabet'}
             className={cn("transition-colors", {
               "bg-primary text-primary-foreground hover:bg-primary/90": config.includeNumbers,
               "text-muted-foreground hover:bg-accent hover:text-accent-foreground": !config.includeNumbers,
@@ -112,7 +123,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Tabs
             value={config.mode}
-            onValueChange={(value) => handleModeChange(value as "time" | "words")}
+            onValueChange={(value) => handleModeChange(value as "time" | "words" | "alphabet")}
           >
             <TabsList>
               <TabsTrigger value="time" disabled={isGenerating}>
@@ -121,18 +132,23 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
               <TabsTrigger value="words" disabled={isGenerating}>
                 <FileText size={16} className="mr-2" /> Words
               </TabsTrigger>
+              <TabsTrigger value="alphabet" disabled={isGenerating}>
+                <CaseUpper size={16} className="mr-2" /> Alphabet
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
-          <Tabs value={String(config.value)} onValueChange={handleValueChange}>
-            <TabsList>
-              {options.map((option) => (
-                <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
-                  {option.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          {config.mode !== 'alphabet' && (
+            <Tabs value={String(config.value)} onValueChange={handleValueChange}>
+              <TabsList>
+                {options.map((option) => (
+                  <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
+                    {option.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          )}
         </div>
 
         <Button
@@ -146,7 +162,7 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           ) : (
             <RefreshCw className="mr-2 h-5 w-5" />
           )}
-          New Story
+          Go
         </Button>
       </form>
     </header>

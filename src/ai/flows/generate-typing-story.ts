@@ -57,7 +57,7 @@ const typingStoryPrompt = ai.definePrompt({
   Do not include numbers in the story.
   {{~/if}}
 
-  Story:`, // Add a "Story:" prefix to improve formatting.
+  Story:`,
 });
 
 const generateTypingStoryFlow = ai.defineFlow(

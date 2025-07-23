@@ -93,7 +93,6 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     if (key === "Backspace") {
       if (charIndex > 0) {
         setCharIndex(charIndex - 1);
-        // Check if the character being removed was incorrect
         if (input[charIndex-1] !== storyText[charIndex-1]) {
            // This logic is complex, as it depends on how we want to track backspace corrections.
            // A simple approach is to not decrement error count on backspace,
@@ -144,7 +143,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     <div className="relative" onClick={() => inputRef.current?.focus()}>
       <div className="flex justify-between items-center mb-4 text-lg text-primary">
         {config.mode === 'time' && <div>Time: {timeLeft}s</div>}
-        {config.mode === 'words' && <div>Progress: {charIndex} / {storyText.length}</div>}
+        {(config.mode === 'words' || config.mode === 'alphabet') && <div>Progress: {charIndex} / {storyText.length}</div>}
         <div>WPM: {wpm}</div>
         <div>Acc: {accuracy}%</div>
       </div>

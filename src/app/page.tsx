@@ -21,6 +21,16 @@ export default function Home() {
     setIsGenerating(true);
     setConfig(newConfig);
     setStory(null); // Clear previous story
+
+    if (newConfig.mode === "alphabet") {
+      setStory({
+        id: `${Date.now()}`,
+        text: "abcdefghijklmnopqrstuvwxyz",
+      });
+      setIsGenerating(false);
+      return;
+    }
+
     try {
       const result = await generateStoryAction({
         includeNumbers: newConfig.includeNumbers,
