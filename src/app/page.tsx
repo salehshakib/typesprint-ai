@@ -9,7 +9,7 @@ import { AppHeader, type AppConfig } from "@/components/app/app-header";
 import { TypingTest } from "@/components/app/typing-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Focus, Github, Twitter } from "lucide-react";
+import { Mouse, Github, Twitter } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -57,7 +57,7 @@ export default function Home() {
         className={cn(
           "flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8 transition-all",
           {
-            "blur-[2px]": showOverlay,
+            "blur-[1px]": showOverlay,
           }
         )}
       >
@@ -119,8 +119,8 @@ export default function Home() {
       </div>
       {showOverlay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
-          <div className="flex flex-col items-center gap-2 text-foreground">
-            <Focus size={32} />
+          <div className="flex items-center gap-2 text-foreground">
+            <Mouse size={24} />
             <p className="text-lg font-medium">
               Click here or press any key to continue
             </p>
