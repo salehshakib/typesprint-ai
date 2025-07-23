@@ -52,60 +52,81 @@ export default function Home() {
   const showOverlay = !isTypingTestFocused && isTestRunning && story;
 
   return (
-    <div className={cn("flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8", {
-      'blur-[2px]': showOverlay,
-    })}>
-      <div className="w-full max-w-5xl">
-        <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
+    <>
+      <div
+        className={cn(
+          "flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-6 md:p-8 transition-all",
+          {
+            "blur-[2px]": showOverlay,
+          }
+        )}
+      >
+        <div className="w-full max-w-5xl">
+          <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
 
-        <Card className="mt-6 sm:mt-8">
-          <CardContent className="p-6 sm:p-8">
-            {isGenerating && (
-              <div className="h-48 space-y-2">
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-1/2" />
-              </div>
-            )}
-            {story && config && (
-              <TypingTest
-                key={story.id}
-                storyText={story.text}
-                config={config}
-                onFocusChange={setIsTypingTestFocused}
-                onStatusChange={(status) => setIsTestRunning(status === 'running' || status === 'idle')}
-              />
-            )}
-            {!isGenerating && !story && (
-              <div className="flex h-48 items-center justify-center text-center">
-                <p className="text-muted-foreground">
-                  Select your preferences above and click 'Go' to start typing.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        <footer className="mt-8 text-center text-muted-foreground">
-          <p>Built with Next.js and Firebase Genkit.</p>
-          <div className="mt-2 flex justify-center gap-4">
-            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              <Github size={20} />
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              <Twitter size={20} />
-            </a>
-          </div>
-        </footer>
+          <Card className="mt-6 sm:mt-8">
+            <CardContent className="p-6 sm:p-8">
+              {isGenerating && (
+                <div className="h-48 space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-1/2" />
+                </div>
+              )}
+              {story && config && (
+                <TypingTest
+                  key={story.id}
+                  storyText={story.text}
+                  config={config}
+                  onFocusChange={setIsTypingTestFocused}
+                  onStatusChange={(status) =>
+                    setIsTestRunning(status === "running" || status === "idle")
+                  }
+                />
+              )}
+              {!isGenerating && !story && (
+                <div className="flex h-48 items-center justify-center text-center">
+                  <p className="text-muted-foreground">
+                    Select your preferences above and click 'Go' to start
+                    typing.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          <footer className="mt-8 text-center text-muted-foreground">
+            <p>Built with Next.js and Firebase Genkit.</p>
+            <div className="mt-2 flex justify-center gap-4">
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                <Github size={20} />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                <Twitter size={20} />
+              </a>
+            </div>
+          </footer>
+        </div>
       </div>
-
       {showOverlay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
           <div className="flex flex-col items-center gap-2 text-foreground">
             <Focus size={32} />
-            <p className="text-lg font-medium">Click here or press any key to continue</p>
+            <p className="text-lg font-medium">
+              Click here or press any key to continue
+            </p>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -65,8 +65,6 @@ const typingStoryPrompt = ai.definePrompt({
 
   {{~#if includeAlphabet}}
   Include the full alphabet "abcdefghijklmnopqrstuvwxyz" somewhere in the story.
-  {{~else}}
-  Do not include the full alphabet in the story.
   {{~/if}}
 
   To ensure variety, use this random seed to make each story unique: {{seed}}
