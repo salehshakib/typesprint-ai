@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Focus } from "lucide-react";
 
 interface TypingTestProps {
   storyText: string;
@@ -28,6 +29,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
   const [errorCount, setErrorCount] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(config.mode === 'time' ? config.value : 0);
+  const [isFocused, setIsFocused] = useState(true);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -72,6 +74,8 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     setTimeElapsed(0);
     if(config.mode === 'time') setTimeLeft(config.value);
     if (intervalRef.current) clearInterval(intervalRef.current);
+    setIsFocused(true);
+    inputRef.current?.focus();
   };
   
   useEffect(() => {
@@ -143,7 +147,9 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto"
+        className={cn("relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto transition-colors",
+          { 'blur-sm': !isFocused && status !== 'finished' }
+        )}
       >
         <div className="whitespace-pre-wrap">
           {words.map((word, wordIndex) => {
@@ -182,6 +188,16 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
           })}
         </div>
       </div>
+
+      {!isFocused && status !== 'finished' && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-md">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Focus size={24} />
+            <p>Click here or press any key to focus</p>
+          </div>
+        </div>
+      )}
+
       <input
         ref={inputRef}
         type="text"
@@ -189,9 +205,8 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
         onKeyDown={handleKeyDown}
         value={input}
         onChange={()=>{}}
-        onBlur={() => {
-            if(status === 'running') inputRef.current?.focus()
-        }}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         autoFocus
       />
       
