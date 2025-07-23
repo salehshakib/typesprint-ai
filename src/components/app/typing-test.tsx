@@ -30,7 +30,6 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
   const [timeLeft, setTimeLeft] = useState(config.mode === 'time' ? config.value : 0);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const words = useMemo(() => storyText.split(" "), [storyText]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const start = useCallback(() => {
@@ -113,7 +112,6 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
     }
   };
 
-  const wordsTyped = input.trim().split(" ").filter(Boolean).length;
   const wpm =
     timeElapsed > 0
       ? Math.round((correctCharCount / 5 / timeElapsed) * 60)
@@ -123,21 +121,17 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
       ? Math.round(((charIndex - errorCount) / charIndex) * 100)
       : 100;
 
-  const characters = useMemo(() => {
-    return storyText.split("").map((char, index) => {
-      let state: "correct" | "incorrect" | "untyped" = "untyped";
-      if (index < input.length) {
-        state = input[index] === char ? "correct" : "incorrect";
-      }
-      return { char, state, isCurrent: index === charIndex };
-    });
-  }, [storyText, charIndex, input]);
-  
+  const words = useMemo(() => {
+    return storyText.split(/(\s+)/).filter(Boolean);
+  }, [storyText]);
+
   const caretRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     caretRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [charIndex])
+  
+  let currentStoryIndex = 0;
 
   return (
     <div className="relative" onClick={() => inputRef.current?.focus()}>
@@ -149,25 +143,44 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-hidden"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto"
       >
-        <div className="whitespace-pre-wrap break-words">
-          {characters.map(({ char, state, isCurrent }, index) => (
-            <span
-              key={index}
-              className={cn({
-                "text-muted-foreground": state === "untyped" && index >= charIndex,
-                "text-foreground": state === "correct",
-                "text-destructive": state === "incorrect",
-                "bg-accent/20": isCurrent,
-              })}
-            >
-              {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
-              {char === ' ' && state === 'incorrect' ? <span className="bg-destructive/50">_</span> : char}
-            </span>
-          ))}
+        <div className="whitespace-pre-wrap">
+          {words.map((word, wordIndex) => {
+            const wordStartIndex = currentStoryIndex;
+            const wordEndIndex = wordStartIndex + word.length;
+            currentStoryIndex = wordEndIndex;
+
+            return (
+              <span key={`${word}-${wordIndex}`} className="inline-block">
+                {word.split('').map((char, charInWordIndex) => {
+                  const index = wordStartIndex + charInWordIndex;
+                  const isCurrent = index === charIndex;
+                  let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+
+                  if (index < input.length) {
+                    state = input[index] === char ? 'correct' : 'incorrect';
+                  }
+
+                  return (
+                    <span
+                      key={`${char}-${index}`}
+                      className={cn({
+                        'text-muted-foreground': state === 'untyped',
+                        'text-foreground': state === 'correct',
+                        'text-destructive': state === 'incorrect',
+                        'bg-accent/20': isCurrent,
+                      })}
+                    >
+                      {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
+                      {char === ' ' && state === 'incorrect' ? <span className="bg-destructive/50">_</span> : char}
+                    </span>
+                  );
+                })}
+              </span>
+            );
+          })}
         </div>
-        
       </div>
       <input
         ref={inputRef}
