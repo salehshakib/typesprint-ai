@@ -14,11 +14,14 @@ import {
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+export type WordCountValue = 10 | 25 | 50;
+export type TimeValue = 15 | 30 | 45 | 60;
+
 export interface AppConfig {
   includePunctuation: boolean;
   includeNumbers: boolean;
   mode: "time" | "words";
-  value: 15 | 30 | 60 | 10 | 25 | 50;
+  value: TimeValue | WordCountValue;
 }
 
 interface AppHeaderProps {
@@ -26,8 +29,17 @@ interface AppHeaderProps {
   isGenerating: boolean;
 }
 
-const timeOptions = [15, 30, 60] as const;
-const wordOptions = [10, 25, 50] as const;
+const timeOptions: { label: string; value: TimeValue }[] = [
+  { label: "15", value: 15 },
+  { label: "30", value: 30 },
+  { label: "45", value: 45 },
+  { label: "60", value: 60 },
+];
+const wordOptions: { label: string; value: WordCountValue }[] = [
+  { label: "small", value: 10 },
+  { label: "medium", value: 25 },
+  { label: "large", value: 50 },
+];
 
 export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
   const [config, setConfig] = useState<AppConfig>({
@@ -115,8 +127,8 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           <Tabs value={String(config.value)} onValueChange={handleValueChange}>
             <TabsList>
               {options.map((option) => (
-                <TabsTrigger key={option} value={String(option)} disabled={isGenerating}>
-                  {option}
+                <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
+                  {option.label}
                 </TabsTrigger>
               ))}
             </TabsList>

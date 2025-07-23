@@ -49,9 +49,10 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
           });
         }, 1000);
       }
-      intervalRef.current = setInterval(() => {
+      const timer = setInterval(() => {
         setTimeElapsed((prev) => prev + 1);
       }, 1000);
+      intervalRef.current = timer;
     }
   }, [status, config.mode, config.value]);
 
