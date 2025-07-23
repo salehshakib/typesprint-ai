@@ -151,7 +151,7 @@ export function TypingTest({ storyText, config }: TypingTestProps) {
       <div
         className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-hidden"
       >
-        <div className="whitespace-pre-wrap">
+        <div className="whitespace-pre-wrap break-words">
           {characters.map(({ char, state, isCurrent }, index) => (
             <span
               key={index}
