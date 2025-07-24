@@ -139,33 +139,42 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       <div
         className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[30rem] overflow-y-auto"
       >
-        <div className="flex flex-wrap">
+        <p className="text-muted-foreground whitespace-pre-wrap">
+          {characters.map((char, index) => (
+            <span key={`${char}-${index}`} className="opacity-0">
+              {char}
+            </span>
+          ))}
+        </p>
+        <p className="absolute top-0 left-0 text-foreground whitespace-pre-wrap">
           {characters.map((char, index) => {
             const isCurrent = index === charIndex;
-            let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+            let state: "correct" | "incorrect" | "untyped" = "untyped";
 
             if (index < input.length) {
-              state = input[index] === char ? 'correct' : 'incorrect';
+              state = input[index] === char ? "correct" : "incorrect";
             }
-
+            
             return (
               <span
-                key={`${char}-${index}`}
+                key={`${char}-${index}-typed`}
                 className={cn({
-                  'text-muted-foreground': state === 'untyped',
-                  'text-foreground': state === 'correct',
-                  'text-destructive': state === 'incorrect',
-                  'bg-destructive/20': state === 'incorrect' && char !== ' ',
-                  'underline decoration-destructive': state === 'incorrect' && char === ' ',
-                  'relative': isCurrent,
+                  "text-transparent": state === "untyped",
+                  "text-foreground": state === "correct",
+                  "text-destructive": state === "incorrect",
                 })}
               >
-                {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
-                {char === ' ' && state === 'untyped' ? '\u00A0' : char}
+                {isCurrent && (
+                  <span
+                    ref={caretRef}
+                    className="absolute h-7 w-[2px] bg-primary animate-caret-blink"
+                  />
+                )}
+                {char}
               </span>
             );
           })}
-        </div>
+        </p>
       </div>
 
       <input
