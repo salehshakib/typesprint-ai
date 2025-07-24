@@ -87,7 +87,7 @@ export default function Home() {
       <div
         className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all"
       >
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-7xl">
           <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
           <div className="relative mt-6 sm:mt-8">
             <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-red-500 bg-gradient-to-r from-blue-500 to-teal-500 blur-3xl" />
