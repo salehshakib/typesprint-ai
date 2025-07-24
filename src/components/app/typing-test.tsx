@@ -78,11 +78,11 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
   }, [stopTimers]);
 
   useEffect(() => {
-      if (status === 'running' && config.mode === 'words' && charIndex === storyText.length) {
+      if (status === 'running' && charIndex === storyText.length) {
           setStatus('finished');
           stopTimers();
       }
-  }, [charIndex, storyText.length, status, config.mode, stopTimers]);
+  }, [charIndex, storyText.length, status, stopTimers]);
 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -139,10 +139,38 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[26rem] overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[26rem] overflow-y-auto"
       >
         <div className="flex flex-wrap">
           {words.map((word, wordIndex) => {
+            if (word.match(/\s+/)) {
+              const spaces = word.split('').map((space, spaceIndex) => {
+                const index = cumulativeLength + spaceIndex;
+                const isCurrent = index === charIndex;
+                let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+
+                if (index < input.length) {
+                    state = input[index] === space ? 'correct' : 'incorrect';
+                }
+
+                return (
+                  <span
+                    key={`${space}-${index}`}
+                    className={cn({
+                      'text-muted-foreground': state === 'untyped',
+                      'bg-destructive/20': state === 'incorrect',
+                      'relative': isCurrent,
+                    })}
+                  >
+                    {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
+                    {space}
+                  </span>
+                )
+              });
+              cumulativeLength += word.length;
+              return <span key={wordIndex}>{spaces}</span>;
+            }
+            
             const wordElement = (
               <span key={wordIndex} className="inline-block">
                 {word.split('').map((char, charInWordIndex) => {
