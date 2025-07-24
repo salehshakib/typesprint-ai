@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import type { AppConfig } from "./app-header";
 import {
@@ -123,8 +123,12 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
 
   useEffect(() => {
     caretRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, [charIndex])
+  }, [charIndex]);
   
+  const words = useMemo(() => storyText.split(/(\s+)/), [storyText]);
+
+  let cumulativeLength = 0;
+
   return (
     <div className="relative" onClick={() => inputRef.current?.focus()}>
       <div className="flex justify-between items-center mb-4 text-lg text-primary">
@@ -135,32 +139,41 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[18rem] overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[26rem] overflow-y-auto"
       >
-        <div className="whitespace-pre-wrap break-words">
-          {storyText.split('').map((char, index) => {
-            const isCurrent = index === charIndex;
-            let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+        <div className="flex flex-wrap">
+          {words.map((word, wordIndex) => {
+            const wordElement = (
+              <span key={wordIndex} className="inline-block">
+                {word.split('').map((char, charInWordIndex) => {
+                  const index = cumulativeLength + charInWordIndex;
+                  const isCurrent = index === charIndex;
+                  let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
 
-            if (index < input.length) {
-              state = input[index] === char ? 'correct' : 'incorrect';
-            }
+                  if (index < input.length) {
+                    state = input[index] === char ? 'correct' : 'incorrect';
+                  }
 
-            return (
-              <span
-                key={`${char}-${index}`}
-                className={cn({
-                  'text-muted-foreground': state === 'untyped',
-                  'text-foreground': state === 'correct',
-                  'text-destructive': state === 'incorrect' && char !== ' ',
-                  'bg-destructive/50': state === 'incorrect' && char === ' ',
-                  'bg-accent/20': isCurrent,
+                  return (
+                    <span
+                      key={`${char}-${index}`}
+                      className={cn({
+                        'text-muted-foreground': state === 'untyped',
+                        'text-foreground': state === 'correct',
+                        'text-destructive': state === 'incorrect',
+                        'bg-destructive/20': state === 'incorrect' && char !== ' ',
+                        'bg-accent/20 relative': isCurrent,
+                      })}
+                    >
+                      {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
+                      {char}
+                    </span>
+                  );
                 })}
-              >
-                {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
-                {char}
               </span>
             );
+            cumulativeLength += word.length;
+            return wordElement;
           })}
         </div>
       </div>
