@@ -78,6 +78,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-grid-pattern">
+      <Meteors number={20} />
       <div
         className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all"
       >
@@ -87,7 +88,6 @@ export default function Home() {
             <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-red-500 bg-gradient-to-r from-blue-500 to-teal-500 blur-3xl" />
             <Card className="mt-6 sm:mt-8 overflow-hidden">
               <CardContent className="p-6 sm:p-8 relative">
-                <Meteors number={20} />
                 {isGenerating && (
                   <div className="h-48 space-y-2">
                     <Skeleton className="h-6 w-3/4" />
