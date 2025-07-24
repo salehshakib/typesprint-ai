@@ -125,8 +125,8 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       ? Math.round(((charIndex - errorCount) / charIndex) * 100)
       : 100;
 
-  const characters = useMemo(() => {
-    return storyText.split('');
+  const words = useMemo(() => {
+    return storyText.split(/(\s+)/);
   }, [storyText]);
 
   const caretRef = useRef<HTMLSpanElement>(null);
@@ -145,10 +145,10 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-64 overflow-y-auto"
       >
         <div className="whitespace-pre-wrap">
-          {characters.map((char, index) => {
+          {storyText.split('').map((char, index) => {
             const isCurrent = index === charIndex;
             let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
 

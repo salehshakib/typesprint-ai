@@ -87,14 +87,14 @@ export default function Home() {
       <div
         className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all"
       >
-        <div className="w-full max-w-5xl">
+        <div className="w-full max-w-6xl">
           <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
           <div className="relative mt-6 sm:mt-8">
             <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-red-500 bg-gradient-to-r from-blue-500 to-teal-500 blur-3xl" />
             <Card className="overflow-hidden">
               <CardContent className="p-6 sm:p-8 relative bg-card/80 backdrop-blur-sm">
                 {isGenerating && (
-                  <div className="h-48 space-y-2">
+                  <div className="h-64 space-y-2">
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-6 w-full" />
                     <Skeleton className="h-6 w-1/2" />
@@ -113,7 +113,7 @@ export default function Home() {
                   />
                 )}
                 {!isGenerating && !story && (
-                  <div className="flex h-48 items-center justify-center text-center">
+                  <div className="flex h-64 items-center justify-center text-center">
                     <p className="text-muted-foreground">
                       Select your preferences above and click 'Go' to start
                       typing.
