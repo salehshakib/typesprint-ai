@@ -141,7 +141,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[21rem] overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[30rem] overflow-y-auto"
       >
         <div className="whitespace-pre-wrap break-words">
           {storyText.split('').map((char, index) => {
