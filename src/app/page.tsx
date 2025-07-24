@@ -9,7 +9,7 @@ import { AppHeader, type AppConfig } from "@/components/app/app-header";
 import { TypingTest } from "@/components/app/typing-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mouse, Github, Twitter } from "lucide-react";
+import { Mouse, Github, Linkedin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Meteors } from "@/components/ui/meteors";
 
@@ -130,12 +130,12 @@ export default function Home() {
                 <Github size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/salehshakib-b346ab283/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >
-                <Twitter size={20} />
+                <Linkedin size={20} />
               </a>
             </div>
           </footer>
