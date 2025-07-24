@@ -19,8 +19,14 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isWindowFocused, setIsWindowFocused] = useState(true);
   const [isTestRunning, setIsTestRunning] = useState(false);
+  const [uniqueId, setUniqueId] = useState('');
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Generate uniqueId on the client side to avoid hydration mismatch
+    setUniqueId(Math.random().toString(36).substring(7));
+  }, []);
 
   useEffect(() => {
     const handleFocus = () => setIsWindowFocused(true);
@@ -48,8 +54,8 @@ export default function Home() {
         includeAlphabet: newConfig.includeAlphabet,
         wordCount: Number(newConfig.value),
       });
-      // Using Date.now() as a simple unique ID to force re-mounting of the TypingTest component
-      setStory({ id: `${Date.now()}`, text: result.story });
+      // Using a client-side generated unique ID to force re-mounting of the TypingTest component
+      setStory({ id: uniqueId, text: result.story });
     } catch (error) {
       console.error("Failed to generate story:", error);
       toast({
