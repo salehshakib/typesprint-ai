@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import type { AppConfig } from "./app-header";
 import {
@@ -42,6 +42,13 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     onStatusChange(status);
   }, [status, onStatusChange]);
 
+  const stopTimers = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timerRef.current) clearInterval(timerRef.current);
+    intervalRef.current = null;
+    timerRef.current = null;
+  }, []);
+
   const start = useCallback(() => {
     if (status === "idle") {
       setStatus("running");
@@ -52,7 +59,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
         timerRef.current = setInterval(() => {
           setTimeLeft((prev) => {
             if (prev <= 1) {
-              if(timerRef.current) clearInterval(timerRef.current);
+              stopTimers();
               setStatus("finished");
               return 0;
             }
@@ -65,18 +72,11 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
         setTimeElapsed((prev) => prev + 1);
       }, 1000);
     }
-  }, [status, config.mode, config.value]);
+  }, [status, config.mode, config.value, stopTimers]);
   
-  const stopTimers = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (timerRef.current) clearInterval(timerRef.current);
-    intervalRef.current = null;
-    timerRef.current = null;
-  }
-
   useEffect(() => {
     return stopTimers;
-  }, []);
+  }, [stopTimers]);
 
   const handleReset = (newStory: boolean = false) => {
     stopTimers();
@@ -88,7 +88,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
           setStatus('finished');
           stopTimers();
       }
-  }, [charIndex, storyText.length, status, config.mode]);
+  }, [charIndex, storyText.length, status, config.mode, stopTimers]);
 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
