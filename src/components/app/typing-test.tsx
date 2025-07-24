@@ -125,8 +125,8 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       ? Math.round(((charIndex - errorCount) / charIndex) * 100)
       : 100;
 
-  const words = useMemo(() => {
-    return storyText.split(/(\s+)/).filter(Boolean);
+  const characters = useMemo(() => {
+    return storyText.split('');
   }, [storyText]);
 
   const caretRef = useRef<HTMLSpanElement>(null);
@@ -135,8 +135,6 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     caretRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [charIndex])
   
-  let currentStoryIndex = 0;
-
   return (
     <div className="relative" onClick={() => inputRef.current?.focus()}>
       <div className="flex justify-between items-center mb-4 text-lg text-primary">
@@ -147,40 +145,29 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto transition-colors"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-48 overflow-y-auto"
       >
         <div className="whitespace-pre-wrap">
-          {words.map((word, wordIndex) => {
-            const wordStartIndex = currentStoryIndex;
-            const wordEndIndex = wordStartIndex + word.length;
-            currentStoryIndex = wordEndIndex;
+          {characters.map((char, index) => {
+            const isCurrent = index === charIndex;
+            let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+
+            if (index < input.length) {
+              state = input[index] === char ? 'correct' : 'incorrect';
+            }
 
             return (
-              <span key={`${word}-${wordIndex}`} className="inline-block">
-                {word.split('').map((char, charInWordIndex) => {
-                  const index = wordStartIndex + charInWordIndex;
-                  const isCurrent = index === charIndex;
-                  let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
-
-                  if (index < input.length) {
-                    state = input[index] === char ? 'correct' : 'incorrect';
-                  }
-
-                  return (
-                    <span
-                      key={`${char}-${index}`}
-                      className={cn({
-                        'text-muted-foreground': state === 'untyped',
-                        'text-foreground': state === 'correct',
-                        'text-destructive': state === 'incorrect',
-                        'bg-accent/20': isCurrent,
-                      })}
-                    >
-                      {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
-                      {char === ' ' && state === 'incorrect' ? <span className="bg-destructive/50">_</span> : char}
-                    </span>
-                  );
+              <span
+                key={`${char}-${index}`}
+                className={cn({
+                  'text-muted-foreground': state === 'untyped',
+                  'text-foreground': state === 'correct',
+                  'text-destructive': state === 'incorrect',
+                  'bg-accent/20': isCurrent,
                 })}
+              >
+                {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
+                {char === ' ' && state === 'incorrect' ? <span className="bg-destructive/50">_</span> : char}
               </span>
             );
           })}
