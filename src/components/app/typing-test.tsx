@@ -36,6 +36,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
 
   const inputRef = useRef<HTMLInputElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     onStatusChange(status);
@@ -45,12 +46,13 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     if (status === "idle") {
       setStatus("running");
       inputRef.current?.focus();
-      let timer: NodeJS.Timeout | null = null;
+      
       if (config.mode === 'time') {
-        timer = setInterval(() => {
+        setTimeLeft(config.value);
+        timerRef.current = setInterval(() => {
           setTimeLeft((prev) => {
             if (prev <= 1) {
-              if(timer) clearInterval(timer);
+              if(timerRef.current) clearInterval(timerRef.current);
               setStatus("finished");
               return 0;
             }
@@ -58,30 +60,33 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
           });
         }, 1000);
       }
-      const elapsedTimer = setInterval(() => {
+      
+      intervalRef.current = setInterval(() => {
         setTimeElapsed((prev) => prev + 1);
       }, 1000);
-
-      intervalRef.current = elapsedTimer; // Store the main timer
     }
   }, [status, config.mode, config.value]);
+  
+  const stopTimers = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timerRef.current) clearInterval(timerRef.current);
+    intervalRef.current = null;
+    timerRef.current = null;
+  }
 
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    return stopTimers;
   }, []);
 
   const handleReset = (newStory: boolean = false) => {
+    stopTimers();
     onRestart(newStory);
   };
   
   useEffect(() => {
       if (status === 'running' && config.mode === 'words' && charIndex === storyText.length) {
           setStatus('finished');
-          if (intervalRef.current) clearInterval(intervalRef.current);
+          stopTimers();
       }
   }, [charIndex, storyText.length, status, config.mode]);
 
@@ -89,18 +94,13 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (status === "finished" || isRestarting) return;
-    if (status === 'idle') start();
+    if (status === 'idle' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Control' && e.key !== 'Meta') start();
 
     const key = e.key;
 
     if (key === "Backspace") {
       if (charIndex > 0) {
         setCharIndex(charIndex - 1);
-        if (input[charIndex-1] !== storyText[charIndex-1]) {
-           // This logic is complex, as it depends on how we want to track backspace corrections.
-           // A simple approach is to not decrement error count on backspace,
-           // letting accuracy reflect all errors made.
-        }
         setInput(input.slice(0, -1));
       }
     } else if (key.length === 1) {
@@ -125,10 +125,6 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       ? Math.round(((charIndex - errorCount) / charIndex) * 100)
       : 100;
 
-  const words = useMemo(() => {
-    return storyText.split(/(\s+)/);
-  }, [storyText]);
-
   const caretRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -145,9 +141,9 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-64 overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-96 overflow-y-auto"
       >
-        <div className="whitespace-pre-wrap">
+        <div className="whitespace-pre-wrap break-words">
           {storyText.split('').map((char, index) => {
             const isCurrent = index === charIndex;
             let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
@@ -176,7 +172,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       
       {status === 'running' && (
         <div className="absolute bottom-0 right-0">
-          <Button variant="ghost" size="icon" onClick={() => onRestart(true)} disabled={isRestarting}>
+          <Button variant="ghost" size="icon" onClick={() => handleReset(true)} disabled={isRestarting}>
              {isRestarting ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
@@ -225,7 +221,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
             </div>
           </div>
           <AlertDialogFooter>
-            <Button onClick={() => handleReset(false)} className="w-full">
+            <Button onClick={() => handleReset(false)} className="w-full" disabled={isRestarting}>
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (

@@ -70,11 +70,12 @@ export default function Home() {
 
   const handleRestart = (isNewStory: boolean = false) => {
     if (isNewStory && config) {
-        handleGenerate(config);
+      // Re-trigger generation with a new seed by calling handleGenerate
+      setUniqueId(Math.random().toString(36).substring(7)); // Ensure a new key for re-mount
+      handleGenerate(config);
     } else {
-      setStory(null);
-      // Keep the config so the user can just press "Go" again.
-      // setConfig(null); 
+      // This will just restart the same test
+      setStory((s) => s ? { ...s, id: Math.random().toString(36).substring(7) } : null);
       setIsTestRunning(false);
     }
   };
@@ -94,7 +95,7 @@ export default function Home() {
             <Card className="overflow-hidden">
               <CardContent className="p-6 sm:p-8 relative bg-card/80 backdrop-blur-sm">
                 {isGenerating && (
-                  <div className="h-64 space-y-2">
+                  <div className="h-[30rem] space-y-2">
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-6 w-full" />
                     <Skeleton className="h-6 w-1/2" />
@@ -113,7 +114,7 @@ export default function Home() {
                   />
                 )}
                 {!isGenerating && !story && (
-                  <div className="flex h-64 items-center justify-center text-center">
+                  <div className="flex h-[30rem] items-center justify-center text-center">
                     <p className="text-muted-foreground">
                       Select your preferences above and click 'Go' to start
                       typing.
