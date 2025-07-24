@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mouse, Github, Twitter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Meteors } from "@/components/ui/meteors";
 
 export default function Home() {
   const [config, setConfig] = useState<AppConfig | null>(null);
@@ -82,38 +83,41 @@ export default function Home() {
       >
         <div className="w-full max-w-5xl">
           <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
-
-          <Card className="mt-6 sm:mt-8">
-            <CardContent className="p-6 sm:p-8">
-              {isGenerating && (
-                <div className="h-48 space-y-2">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-1/2" />
-                </div>
-              )}
-              {story && config && (
-                <TypingTest
-                  key={story.id}
-                  storyText={story.text}
-                  config={config}
-                  onStatusChange={(status) =>
-                    setIsTestRunning(status === "running" || status === "idle")
-                  }
-                  onRestart={handleRestart}
-                  isRestarting={isGenerating}
-                />
-              )}
-              {!isGenerating && !story && (
-                <div className="flex h-48 items-center justify-center text-center">
-                  <p className="text-muted-foreground">
-                    Select your preferences above and click 'Go' to start
-                    typing.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <div className="relative">
+            <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-red-500 bg-gradient-to-r from-blue-500 to-teal-500 blur-3xl" />
+            <Card className="mt-6 sm:mt-8 overflow-hidden">
+              <CardContent className="p-6 sm:p-8 relative">
+                <Meteors number={20} />
+                {isGenerating && (
+                  <div className="h-48 space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-1/2" />
+                  </div>
+                )}
+                {story && config && (
+                  <TypingTest
+                    key={story.id}
+                    storyText={story.text}
+                    config={config}
+                    onStatusChange={(status) =>
+                      setIsTestRunning(status === "running" || status === "idle")
+                    }
+                    onRestart={handleRestart}
+                    isRestarting={isGenerating}
+                  />
+                )}
+                {!isGenerating && !story && (
+                  <div className="flex h-48 items-center justify-center text-center">
+                    <p className="text-muted-foreground">
+                      Select your preferences above and click 'Go' to start
+                      typing.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
           <footer className="mt-8 text-center text-muted-foreground">
             <p>Built with Next.js and Firebase Genkit.</p>
             <div className="mt-2 flex justify-center gap-4">
