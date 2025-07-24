@@ -11,10 +11,10 @@ import {
   Loader2,
   RefreshCw,
   CaseUpper,
-  SignalLow,
-  SignalMedium,
-  Signal,
-  SignalHigh
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,10 +43,10 @@ const timeOptions: { label: string; value: TimeValue }[] = [
   { label: "60", value: 60 },
 ];
 const wordOptions: { label: React.ReactNode; value: WordCountValue }[] = [
-  { label: <SignalLow size={16} />, value: 10 },
-  { label: <SignalMedium size={16} />, value: 25 },
-  { label: <Signal size={16} />, value: 50 },
-  { label: <SignalHigh size={16} />, value: 100 },
+  { label: <AlignLeft size={16} />, value: 10 },
+  { label: <AlignCenter size={16} />, value: 25 },
+  { label: <AlignRight size={16} />, value: 50 },
+  { label: <AlignJustify size={16} />, value: 100 },
 ];
 
 export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
