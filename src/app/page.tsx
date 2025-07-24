@@ -84,10 +84,10 @@ export default function Home() {
       >
         <div className="w-full max-w-5xl">
           <AppHeader onGenerate={handleGenerate} isGenerating={isGenerating} />
-          <div className="relative">
+          <div className="relative mt-6 sm:mt-8">
             <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-red-500 bg-gradient-to-r from-blue-500 to-teal-500 blur-3xl" />
-            <Card className="mt-6 sm:mt-8 overflow-hidden">
-              <CardContent className="p-6 sm:p-8 relative">
+            <Card className="overflow-hidden">
+              <CardContent className="p-6 sm:p-8 relative bg-card/80 backdrop-blur-sm">
                 {isGenerating && (
                   <div className="h-48 space-y-2">
                     <Skeleton className="h-6 w-3/4" />
