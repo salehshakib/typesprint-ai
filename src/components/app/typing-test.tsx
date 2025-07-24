@@ -125,7 +125,9 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     caretRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [charIndex]);
   
-  const characters = useMemo(() => storyText.split(''), [storyText]);
+  const words = useMemo(() => storyText.split(/(\s+)/), [storyText]);
+
+  let currentGlobalCharIndex = 0;
 
   return (
     <div className="relative" onClick={() => inputRef.current?.focus()}>
@@ -140,30 +142,42 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
         className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[30rem] overflow-y-auto"
       >
         <div className="text-muted-foreground whitespace-pre-wrap">
-          {characters.map((char, index) => {
-            const isTyped = index < charIndex;
-            const isCurrent = index === charIndex;
-            const isCorrect = isTyped && input[index] === char;
-
+          {words.map((word, wordIndex) => {
+            if (word === "") return null;
+            const wordStartCharIndex = currentGlobalCharIndex;
+            const wordEndCharIndex = wordStartCharIndex + word.length;
+            currentGlobalCharIndex = wordEndCharIndex;
+            
             return (
-              <span
-                key={`${char}-${index}`}
-                className={cn({
-                  "text-foreground": isTyped && isCorrect,
-                  "text-destructive": isTyped && !isCorrect,
-                  "text-muted-foreground": !isTyped,
-                  "relative": isCurrent
+              <span key={`${word}-${wordIndex}`} className="inline-block">
+                {word.split('').map((char, charInWordIndex) => {
+                  const totalCharIndex = wordStartCharIndex + charInWordIndex;
+                  const isTyped = totalCharIndex < charIndex;
+                  const isCurrent = totalCharIndex === charIndex;
+                  const isCorrect = isTyped && input[totalCharIndex] === char;
+
+                  return (
+                    <span
+                      key={`${char}-${totalCharIndex}`}
+                      className={cn({
+                        "text-foreground": isTyped && isCorrect,
+                        "text-destructive": isTyped && !isCorrect,
+                        "text-muted-foreground": !isTyped,
+                        "relative": isCurrent
+                      })}
+                    >
+                      {isCurrent && (
+                        <span
+                          ref={caretRef}
+                          className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink"
+                        />
+                      )}
+                      {char}
+                    </span>
+                  );
                 })}
-              >
-                {isCurrent && (
-                  <span
-                    ref={caretRef}
-                    className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink"
-                  />
-                )}
-                {char}
               </span>
-            );
+            )
           })}
         </div>
       </div>
