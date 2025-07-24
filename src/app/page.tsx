@@ -55,7 +55,7 @@ export default function Home() {
         wordCount: Number(newConfig.value),
       });
       // Using a client-side generated unique ID to force re-mounting of the TypingTest component
-      setStory({ id: uniqueId, text: result.story });
+      setStory({ id: Math.random().toString(36).substring(7), text: result.story });
     } catch (error) {
       console.error("Failed to generate story:", error);
       toast({
@@ -71,7 +71,6 @@ export default function Home() {
   const handleRestart = (isNewStory: boolean = false) => {
     if (isNewStory && config) {
       // Re-trigger generation with a new seed by calling handleGenerate
-      setUniqueId(Math.random().toString(36).substring(7)); // Ensure a new key for re-mount
       handleGenerate(config);
     } else {
       // This will just restart the same test

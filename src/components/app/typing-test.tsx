@@ -141,7 +141,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-96 overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[21rem] overflow-y-auto"
       >
         <div className="whitespace-pre-wrap break-words">
           {storyText.split('').map((char, index) => {
@@ -220,7 +220,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
               <div className="text-4xl font-bold text-primary">{timeElapsed}s</div>
             </div>
           </div>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="flex-row gap-2">
             <Button onClick={() => handleReset(false)} className="w-full" disabled={isRestarting}>
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -228,6 +228,14 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
                 <RefreshCw className="mr-2 h-5 w-5" />
               )}
               Play Again
+            </Button>
+            <Button onClick={() => handleReset(true)} className="w-full" disabled={isRestarting}>
+               {isRestarting ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-5 w-5" />
+              )}
+              New Story
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
