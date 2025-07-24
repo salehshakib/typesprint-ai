@@ -139,42 +139,33 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       <div
         className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[30rem] overflow-y-auto"
       >
-        <p className="text-muted-foreground whitespace-pre-wrap">
-          {characters.map((char, index) => (
-            <span key={`${char}-${index}`} className="opacity-0">
-              {char}
-            </span>
-          ))}
-        </p>
-        <p className="absolute top-0 left-0 text-foreground whitespace-pre-wrap">
+        <div className="text-muted-foreground whitespace-pre-wrap">
           {characters.map((char, index) => {
+            const isTyped = index < charIndex;
             const isCurrent = index === charIndex;
-            let state: "correct" | "incorrect" | "untyped" = "untyped";
+            const isCorrect = isTyped && input[index] === char;
 
-            if (index < input.length) {
-              state = input[index] === char ? "correct" : "incorrect";
-            }
-            
             return (
               <span
-                key={`${char}-${index}-typed`}
+                key={`${char}-${index}`}
                 className={cn({
-                  "text-transparent": state === "untyped",
-                  "text-foreground": state === "correct",
-                  "text-destructive": state === "incorrect",
+                  "text-foreground": isTyped && isCorrect,
+                  "text-destructive": isTyped && !isCorrect,
+                  "text-muted-foreground": !isTyped,
+                  "relative": isCurrent
                 })}
               >
                 {isCurrent && (
                   <span
                     ref={caretRef}
-                    className="absolute h-7 w-[2px] bg-primary animate-caret-blink"
+                    className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink"
                   />
                 )}
                 {char}
               </span>
             );
           })}
-        </p>
+        </div>
       </div>
 
       <input
