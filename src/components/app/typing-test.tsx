@@ -187,7 +187,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       
       {status === 'running' && (
         <div className="absolute bottom-0 right-0">
-          <Button variant="ghost" size="icon" onClick={() => handleReset(true)} disabled={isRestarting}>
+          <Button variant="ghost" size="icon" onClick={() => onRestart(true)} disabled={isRestarting}>
              {isRestarting ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
@@ -236,7 +236,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
             </div>
           </div>
           <AlertDialogFooter>
-            <Button onClick={() => handleReset(false)} className="w-full">
+            <Button onClick={() => onRestart(false)} className="w-full">
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
