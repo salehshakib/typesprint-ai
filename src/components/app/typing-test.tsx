@@ -135,7 +135,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[30rem] overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-[18rem] overflow-y-auto"
       >
         <div className="whitespace-pre-wrap break-words">
           {storyText.split('').map((char, index) => {
@@ -152,12 +152,13 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
                 className={cn({
                   'text-muted-foreground': state === 'untyped',
                   'text-foreground': state === 'correct',
-                  'text-destructive': state === 'incorrect',
+                  'text-destructive': state === 'incorrect' && char !== ' ',
+                  'bg-destructive/50': state === 'incorrect' && char === ' ',
                   'bg-accent/20': isCurrent,
                 })}
               >
                 {isCurrent && <span ref={caretRef} className="absolute -ml-[1px] h-7 w-[2px] bg-primary animate-caret-blink" />}
-                {char === ' ' && state === 'incorrect' ? <span className="bg-destructive/50">_</span> : char}
+                {char}
               </span>
             );
           })}
@@ -202,7 +203,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
               <div className="text-4xl font-bold text-primary">{timeElapsed}s</div>
             </div>
           </div>
-          <AlertDialogFooter className="flex-row gap-2">
+          <AlertDialogFooter className="sm:justify-start flex-col sm:flex-row gap-2">
             <Button onClick={() => onRestart(false)} className="w-full" disabled={isRestarting}>
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
