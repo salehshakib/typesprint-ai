@@ -62,14 +62,13 @@ export default function Home() {
     }
   };
 
-  const handleRestart = async (isNewStory: boolean = false) => {
-    if (isNewStory) {
-      if (config) {
-        await handleGenerate(config);
-      }
+  const handleRestart = (isNewStory: boolean = false) => {
+    if (isNewStory && config) {
+        handleGenerate(config);
     } else {
       setStory(null);
-      setConfig(null);
+      // Keep the config so the user can just press "Go" again.
+      // setConfig(null); 
       setIsTestRunning(false);
     }
   };

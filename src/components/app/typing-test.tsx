@@ -45,11 +45,12 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     if (status === "idle") {
       setStatus("running");
       inputRef.current?.focus();
+      let timer: NodeJS.Timeout | null = null;
       if (config.mode === 'time') {
-        intervalRef.current = setInterval(() => {
+        timer = setInterval(() => {
           setTimeLeft((prev) => {
             if (prev <= 1) {
-              clearInterval(intervalRef.current!);
+              if(timer) clearInterval(timer);
               setStatus("finished");
               return 0;
             }
@@ -57,10 +58,11 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
           });
         }, 1000);
       }
-      const timer = setInterval(() => {
+      const elapsedTimer = setInterval(() => {
         setTimeElapsed((prev) => prev + 1);
       }, 1000);
-      intervalRef.current = timer;
+
+      intervalRef.current = elapsedTimer; // Store the main timer
     }
   }, [status, config.mode, config.value]);
 
@@ -236,7 +238,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
             </div>
           </div>
           <AlertDialogFooter>
-            <Button onClick={() => onRestart(false)} className="w-full">
+            <Button onClick={() => handleReset(false)} className="w-full">
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
