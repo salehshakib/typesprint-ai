@@ -21,7 +21,7 @@ interface TypingTestProps {
   storyText: string;
   config: AppConfig;
   onStatusChange: (status: TestStatus) => void;
-  onRestart: () => void;
+  onRestart: (isNewStory?: boolean) => void;
   isRestarting: boolean;
 }
 
@@ -73,19 +73,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
   }, []);
 
   const handleReset = (newStory: boolean = false) => {
-    if (newStory) {
-      onRestart();
-      return;
-    }
-    setStatus("idle");
-    setInput("");
-    setCharIndex(0);
-    setCorrectCharCount(0);
-    setErrorCount(0);
-    setTimeElapsed(0);
-    if(config.mode === 'time') setTimeLeft(config.value);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    inputRef.current?.focus();
+    onRestart(newStory);
   };
   
   useEffect(() => {
@@ -248,7 +236,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
             </div>
           </div>
           <AlertDialogFooter>
-            <Button onClick={() => handleReset(true)} className="w-full">
+            <Button onClick={() => handleReset(false)} className="w-full">
                {isRestarting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (

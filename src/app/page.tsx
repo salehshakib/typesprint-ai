@@ -61,12 +61,18 @@ export default function Home() {
     }
   };
 
-  const handleRestart = async () => {
-    if (config) {
-      await handleGenerate(config);
+  const handleRestart = async (isNewStory: boolean = false) => {
+    if (isNewStory) {
+      if (config) {
+        await handleGenerate(config);
+      }
+    } else {
+      setStory(null);
+      setConfig(null);
+      setIsTestRunning(false);
     }
   };
-
+  
   const showOverlay = !isWindowFocused && isTestRunning && story;
 
   return (

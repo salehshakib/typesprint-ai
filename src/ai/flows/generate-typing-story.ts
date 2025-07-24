@@ -49,7 +49,7 @@ const typingStoryPrompt = ai.definePrompt({
   output: {schema: GenerateTypingStoryOutputSchema},
   prompt: `You are an AI that generates typing stories based on user preferences.
 
-  Generate a story with approximately {{wordCount}} words.
+  Generate a creative and engaging story with approximately {{wordCount}} words. The story should be on a random topic, such as science fiction, fantasy, adventure, mystery, or a simple day in the life. Avoid generic or repetitive themes.
 
   {{~#if includePunctuation}}
   Include punctuation in the story.
