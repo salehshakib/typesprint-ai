@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import type { AppConfig } from "./app-header";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -78,11 +77,6 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     return stopTimers;
   }, [stopTimers]);
 
-  const handleReset = (newStory: boolean = false) => {
-    stopTimers();
-    onRestart(newStory);
-  };
-  
   useEffect(() => {
       if (status === 'running' && config.mode === 'words' && charIndex === storyText.length) {
           setStatus('finished');
@@ -169,18 +163,6 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
           })}
         </div>
       </div>
-      
-      {status === 'running' && (
-        <div className="absolute bottom-0 right-0">
-          <Button variant="ghost" size="icon" onClick={() => onRestart(true)} disabled={isRestarting}>
-             {isRestarting ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <RefreshCw className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      )}
 
       <input
         ref={inputRef}

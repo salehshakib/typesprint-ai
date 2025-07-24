@@ -64,7 +64,9 @@ const typingStoryPrompt = ai.definePrompt({
   {{~/if}}
 
   {{~#if includeAlphabet}}
-  Include the full alphabet "abcdefghijklmnopqrstuvwxyz" somewhere in the story.
+  Include the full alphabet "abcdefghijklmnopqrstuvwxyz" somewhere in the story. Start the story with a capital letter.
+  {{~else}}
+  Do not start the story with a capital letter.
   {{~/if}}
 
   To ensure variety, use this random seed to make each story unique: {{seed}}
