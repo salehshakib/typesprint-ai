@@ -145,9 +145,14 @@ export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
           </Tabs>
 
           <Tabs value={String(config.value)} onValueChange={handleValueChange}>
-            <TabsList>
+             <TabsList className="min-w-[210px] justify-center">
               {options.map((option) => (
-                <TabsTrigger key={option.value} value={String(option.value)} disabled={isGenerating}>
+                <TabsTrigger
+                  key={option.value}
+                  value={String(option.value)}
+                  disabled={isGenerating}
+                  className="flex-1"
+                >
                   {option.label}
                 </TabsTrigger>
               ))}

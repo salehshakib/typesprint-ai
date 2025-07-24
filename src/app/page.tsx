@@ -76,8 +76,7 @@ export default function Home() {
   const showOverlay = !isWindowFocused && isTestRunning && story;
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-       <div className="absolute inset-0 bg-grid-pattern animate-grid-flow -z-10" />
+    <div className="relative min-h-screen overflow-hidden bg-grid-pattern">
       <div
         className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all"
       >
