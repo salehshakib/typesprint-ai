@@ -11,10 +11,6 @@ import {
   Loader2,
   RefreshCw,
   CaseUpper,
-  Minus,
-  Equal,
-  Plus,
-  Text,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,11 +38,11 @@ const timeOptions: { label: string; value: TimeValue }[] = [
   { label: "45", value: 45 },
   { label: "60", value: 60 },
 ];
-const wordOptions: { label: React.ReactNode; value: WordCountValue }[] = [
-  { label: <Minus size={16} />, value: 10 },
-  { label: <Equal size={16} />, value: 25 },
-  { label: <Plus size={16} />, value: 50 },
-  { label: <Text size={16} />, value: 100 },
+const wordOptions: { label: string; value: WordCountValue }[] = [
+  { label: "10", value: 10 },
+  { label: "25", value: 25 },
+  { label: "50", value: 50 },
+  { label: "100", value: 100 },
 ];
 
 export function AppHeader({ onGenerate, isGenerating }: AppHeaderProps) {
