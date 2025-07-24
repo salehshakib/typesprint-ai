@@ -139,7 +139,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
       </div>
       
       <div
-        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[26rem] overflow-y-auto"
+        className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[30rem] overflow-y-auto"
       >
         <div className="flex flex-wrap">
           {words.map((word, wordIndex) => {
