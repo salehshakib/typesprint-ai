@@ -125,9 +125,7 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
     caretRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [charIndex]);
   
-  const words = useMemo(() => storyText.split(/(\s+)/), [storyText]);
-
-  let cumulativeLength = 0;
+  const characters = useMemo(() => storyText.split(''), [storyText]);
 
   return (
     <div className="relative" onClick={() => inputRef.current?.focus()}>
@@ -142,66 +140,30 @@ export function TypingTest({ storyText, config, onStatusChange, onRestart, isRes
         className="relative text-2xl font-mono tracking-wide leading-relaxed text-left h-auto min-h-[30rem] overflow-y-auto"
       >
         <div className="flex flex-wrap">
-          {words.map((word, wordIndex) => {
-            if (word.match(/\s+/)) {
-              const spaces = word.split('').map((space, spaceIndex) => {
-                const index = cumulativeLength + spaceIndex;
-                const isCurrent = index === charIndex;
-                let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
+          {characters.map((char, index) => {
+            const isCurrent = index === charIndex;
+            let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
 
-                if (index < input.length) {
-                    state = input[index] === space ? 'correct' : 'incorrect';
-                }
-
-                return (
-                  <span
-                    key={`${space}-${index}`}
-                    className={cn({
-                      'text-muted-foreground': state === 'untyped',
-                      'bg-destructive/20': state === 'incorrect',
-                      'relative': isCurrent,
-                    })}
-                  >
-                    {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
-                    {space}
-                  </span>
-                )
-              });
-              cumulativeLength += word.length;
-              return <span key={wordIndex}>{spaces}</span>;
+            if (index < input.length) {
+              state = input[index] === char ? 'correct' : 'incorrect';
             }
-            
-            const wordElement = (
-              <span key={wordIndex} className="inline-block">
-                {word.split('').map((char, charInWordIndex) => {
-                  const index = cumulativeLength + charInWordIndex;
-                  const isCurrent = index === charIndex;
-                  let state: 'correct' | 'incorrect' | 'untyped' = 'untyped';
 
-                  if (index < input.length) {
-                    state = input[index] === char ? 'correct' : 'incorrect';
-                  }
-
-                  return (
-                    <span
-                      key={`${char}-${index}`}
-                      className={cn({
-                        'text-muted-foreground': state === 'untyped',
-                        'text-foreground': state === 'correct',
-                        'text-destructive': state === 'incorrect',
-                        'bg-destructive/20': state === 'incorrect' && char !== ' ',
-                        'bg-accent/20 relative': isCurrent,
-                      })}
-                    >
-                      {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
-                      {char}
-                    </span>
-                  );
+            return (
+              <span
+                key={`${char}-${index}`}
+                className={cn({
+                  'text-muted-foreground': state === 'untyped',
+                  'text-foreground': state === 'correct',
+                  'text-destructive': state === 'incorrect',
+                  'bg-destructive/20': state === 'incorrect' && char !== ' ',
+                  'underline decoration-destructive': state === 'incorrect' && char === ' ',
+                  'relative': isCurrent,
                 })}
+              >
+                {isCurrent && <span ref={caretRef} className="absolute left-0 h-7 w-[2px] bg-primary animate-caret-blink" />}
+                {char === ' ' && state === 'untyped' ? '\u00A0' : char}
               </span>
             );
-            cumulativeLength += word.length;
-            return wordElement;
           })}
         </div>
       </div>
