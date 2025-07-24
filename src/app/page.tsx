@@ -122,7 +122,7 @@ export default function Home() {
             <p>Built with Next.js and Firebase Genkit.</p>
             <div className="mt-2 flex justify-center gap-4">
               <a
-                href="#"
+                href="https://github.com/salehshakib"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
